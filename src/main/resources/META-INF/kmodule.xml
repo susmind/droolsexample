@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kmodule xmlns="http://jboss.org/kie/6.0.0/kmodule">
-    <kbase name="job-rules" packages="com.drools.example">
-        <ksession name="ksession-stl-rules"/>
+    <kbase name="job-rules" packages="rules.job">
+        <ksession name="ksession-job-rules"/>
     </kbase>
 </kmodule>

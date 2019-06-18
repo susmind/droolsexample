@@ -1,0 +1,25 @@
+package rules.job
+
+import com.drools.example.Job;
+
+dialect "mvel"
+
+rule "Water Pipeline Job"
+    when
+        j : Job( jobType.equals("Water Pipeline Job") , jobStatus.equals("New"), jn : jobName )
+    then
+        j.setJobOwner( "Ocean Water Supply Pty Ltd" );
+        j.setJobStatus( "Assigned" );
+        update( j );
+end
+
+rule "Electricity Pole Job"
+    when
+        j : Job( jobType.equals("Electricity Pole Job") , jobStatus.equals("New"), jn : jobName )
+    then
+        j.setJobOwner( "Roads Electricity Service Pty Ltd" );
+        j.setJobStatus( "Assigned" );
+        update( j );
+end
+
+
