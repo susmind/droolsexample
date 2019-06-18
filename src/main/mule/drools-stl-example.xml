@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="bdb8260c-45fa-436c-9634-a1dec8832985" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="drools-stl-exampleFlow" doc:id="f5b9cc28-d1fa-49ca-a9cc-14629ffa789f" >
+		<http:listener doc:name="Listener" doc:id="0d0d5e83-3208-414a-bec9-d1bca1a1b16c" config-ref="HTTP_Listener_config" path="/stl-rules"/>
+		<ee:transform doc:name="Transform Message" doc:id="f669c27d-a214-4bbe-96c7-d9dfb32ca2dd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	assetLabel: payload.assetLable,
+	igniter: payload.igniter,
+	lightStatus: payload.lightStatus,
+	si1: payload.si1,
+} as Object {
+	class : "com.drools.example.StlRules"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value='#[payload as Object {
+	class : "com.drools.example.StlRules"
+}]' doc:name="Set Variable" doc:id="686f9fba-98d7-4f5b-a527-b32255a88815" variableName="flowSltRules"/>
+		<java:invoke-static doc:name="Invoke static" doc:id="9b8208fd-5690-4f3e-b246-178c78e31963" class="com.drools.example.SltRulesEngine" method="executeJobRules(StlRules)">
+			<java:args ><![CDATA[#[{
+	arg0 : vars.flowSltRules
+}]]]></java:args>
+		</java:invoke-static>
+		<ee:transform doc:name="Transform Message" doc:id="d342e515-ea1f-446a-ac2e-c469892faeed" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	si1: vars.flowSltRules.si1 default 0,
+	igniter: vars.flowSltRules.igniter default "",
+	assetLable: vars.flowSltRules.assetLabel default "",
+	lightStatus: vars.flowSltRules.lightStatus default "",
+	error: vars.flowSltRules.errors default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

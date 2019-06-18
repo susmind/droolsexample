@@ -1,0 +1,27 @@
+package com.drools.example;
+
+import com.drools.example.StlRules;
+
+dialect "mvel"
+
+rule "STL Igniter"
+when
+$stlRules: StlRules(si1 in (1,2,3,4) && igniter == "ext") 
+then
+$stlRules.setErrors(" Invalid Igniter ")
+end
+
+rule "STL LightStatus"
+when
+$stlRules: StlRules(si1 in (1,2,3,4) && lightStatus == "REMOVED") 
+then
+$stlRules.setErrors(" Invalid LightStatus ")
+end
+
+rule "STL Asset Label"
+when
+$stlRules: StlRules (si1 in (1,2,3,4) && (assetLabel == "UNKNOWN" || assetLabel == "")) 
+then
+$stlRules.setErrors("Asset Label required")
+end
+

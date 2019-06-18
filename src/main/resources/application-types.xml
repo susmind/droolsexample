@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="json-slt-rule" format="json">
+      <types:shape format="weave" example="examples/sample.json"><![CDATA[%dw 2.0
+type json_slt_rule = {|
+  si1: Number {"typeId": "int"}, 
+  igniter: String, 
+  assetLable: String, 
+  lightStatus: String, 
+  error: String
+|} {"MetadataFormat": "json",
+"example": "{\"si1\":2,\"igniter\":\"ext\",\"assetLable\":\"UNKNOWN\",\"lightStatus\":\"REMOVED\",\"error\":\"\"}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="java-slt-rule" format="java">
+      <types:shape format="java" element="com.drools.example.StlRules"/>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#f669c27d-a214-4bbe-96c7-d9dfb32ca2dd">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="json-slt-rule"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="java-slt-rule"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#d342e515-ea1f-446a-ac2e-c469892faeed">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="json-slt-rule"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
